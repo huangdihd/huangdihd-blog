@@ -1,17 +1,17 @@
-# My First Post
+# 我的第一篇文章
 
-Welcome to my new blog! This is the first post.
+欢迎来到我的新博客！这是第一篇文章。
 
-## Why VitePress?
+## 为什么选择 VitePress？
 
-VitePress provides a great developer experience out of the box, with built-in Markdown support and Vue-powered interactivity. It's incredibly fast and easy to configure.
+VitePress 开箱即用，提供了极佳的开发者体验，内置了对 Markdown 的支持以及 Vue 驱动的交互。它速度极快且配置简单。
 
-Here's a quick code snippet:
+下面是一段代码示例：
 
 ```js
 function hello() {
-  console.log("Hello World!");
+  console.log("你好，世界！");
 }
 ```
 
-Stay tuned for more updates!
+敬请期待更多更新！
