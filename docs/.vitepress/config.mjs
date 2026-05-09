@@ -46,7 +46,8 @@ export default defineConfig({
           text: '无监督学习',
           collapsed: false,
           items: [
-            { text: '概览', link: '/ml/unsupervised/' }
+            { text: '概览', link: '/ml/unsupervised/' },
+            { text: '基本概念', link: '/ml/unsupervised/what-is' }
           ]
         }
       ],
