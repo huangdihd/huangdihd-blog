@@ -22,7 +22,7 @@ features:
   - title: 数据结构与算法
     details: 对数据结构和算法的一些理解。
   - title: 机器学习算法
-    details: 对于机器学习原理的一些看法与见解
+    details: 对于机器学习原理的一些看法与见解。
   - title: 人工智能应用
-    details: 展示个人开发的人工智能项目
+    details: 展示个人开发的人工智能项目。
 ---

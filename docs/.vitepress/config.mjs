@@ -35,7 +35,8 @@ export default defineConfig({
           text: '有监督学习',
           collapsed: false,
           items: [
-            { text: '概览', link: '/ml/supervised/' }
+            { text: '概览', link: '/ml/supervised/' },
+            { text: '基本概念', link: '/ml/supervised/what-is' }
           ]
         },
         {
