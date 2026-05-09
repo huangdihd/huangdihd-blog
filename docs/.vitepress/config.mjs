@@ -19,7 +19,8 @@ export default defineConfig({
         {
           text: '数据结构与算法',
           items: [
-            { text: '引言', link: '/dsa/' }
+            { text: '引言', link: '/dsa/' },
+            { text: '数组基础', link: '/dsa/array-basics' }
           ]
         }
       ],
