@@ -8,15 +8,42 @@ export default defineConfig({
     logo: '/avatar.jpeg',
     nav: [
       { text: '首页', link: '/' },
-      { text: '博客', link: '/posts/first-post' },
+      { text: '数据结构与算法', link: '/dsa/' },
+      { text: '机器学习算法', link: '/ml/' },
+      { text: '人工智能应用', link: '/ai/' },
+      { text: '个人项目', link: '/projects/' },
       { text: '关于', link: '/about' }
     ],
     sidebar: {
-      '/posts/': [
+      '/dsa/': [
         {
-          text: '博客文章',
+          text: '数据结构与算法',
           items: [
-            { text: '我的第一篇文章', link: '/posts/first-post' }
+            { text: '引言', link: '/dsa/' }
+          ]
+        }
+      ],
+      '/ml/': [
+        {
+          text: '机器学习算法',
+          items: [
+            { text: '引言', link: '/ml/' }
+          ]
+        }
+      ],
+      '/ai/': [
+        {
+          text: '人工智能应用',
+          items: [
+            { text: '引言', link: '/ai/' }
+          ]
+        }
+      ],
+      '/projects/': [
+        {
+          text: '个人项目',
+          items: [
+            { text: '项目概览', link: '/projects/' }
           ]
         }
       ]
