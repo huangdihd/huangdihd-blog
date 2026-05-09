@@ -39,7 +39,8 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '概览', link: '/ml/supervised/' },
-            { text: '基本概念', link: '/ml/supervised/what-is' }
+            { text: '基本概念', link: '/ml/supervised/what-is' },
+            { text: '梯度下降', link: '/ml/supervised/gradient-descent' }
           ]
         },
         {
