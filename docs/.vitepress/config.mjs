@@ -26,9 +26,23 @@ export default defineConfig({
       ],
       '/ml/': [
         {
-          text: '机器学习算法',
+          text: '机器学习基础',
           items: [
             { text: '引言', link: '/ml/' }
+          ]
+        },
+        {
+          text: '有监督学习',
+          collapsed: false,
+          items: [
+            { text: '概览', link: '/ml/supervised/' }
+          ]
+        },
+        {
+          text: '无监督学习',
+          collapsed: false,
+          items: [
+            { text: '概览', link: '/ml/unsupervised/' }
           ]
         }
       ],
