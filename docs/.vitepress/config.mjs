@@ -4,6 +4,7 @@ export default defineConfig({
   title: "Huangdihd's Blog",
   description: "A personal blog and portfolio",
   themeConfig: {
+    logo: '/avatar.jpeg',
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Blog', link: '/posts/first-post' },

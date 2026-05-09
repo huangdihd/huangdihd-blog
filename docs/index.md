@@ -5,6 +5,9 @@ hero:
   name: "Huangdihd's Blog"
   text: "Welcome to my personal space"
   tagline: Exploring code, technology, and life.
+  image:
+    src: /avatar.jpeg
+    alt: Huangdihd's Avatar
   actions:
     - theme: brand
       text: Read Blog
