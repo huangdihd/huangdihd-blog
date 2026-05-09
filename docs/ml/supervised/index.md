@@ -16,3 +16,10 @@
 - 支持向量机 (SVM)
 - 决策树与随机森林 (Decision Trees & Random Forests)
 - 人工神经网络 (Neural Networks)
+
+## 章节目录
+
+- [基本概念：损失函数与优化器](./what-is)
+- [梯度下降：寻找最优解的下山之路](./gradient-descent)
+- [反向传播：高效计算梯度的艺术](./backpropagation)
+- [卷积：局部感知与参数共享](./convolution)
