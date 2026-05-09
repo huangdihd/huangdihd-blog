@@ -25,3 +25,4 @@
 如果你对我的项目感兴趣，或者想一起交流技术，可以通过以下方式找到我：
 
 - **GitHub**: [huangdihd](https://github.com/huangdihd)
+- **Telegram**: [@huangdihd_personal](https://t.me/huangdihd_personal)
