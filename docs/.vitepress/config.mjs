@@ -66,7 +66,8 @@ export default defineConfig({
         {
           text: '个人项目',
           items: [
-            { text: '项目概览', link: '/projects/' }
+            { text: '项目概览', link: '/projects/' },
+            { text: 'Xinbot 开发记录', link: '/projects/xinbot' }
           ]
         }
       ]
