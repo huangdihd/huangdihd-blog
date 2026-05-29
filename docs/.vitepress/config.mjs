@@ -4,6 +4,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: "Huangdihd 的博客",
   description: "个人博客与作品集",
+  lastUpdated: true,
   markdown: {
     math: true
   },
