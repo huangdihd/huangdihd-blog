@@ -69,6 +69,12 @@ export default defineConfig({
             { text: '项目概览', link: '/projects/' },
             { text: 'Xinbot 开发记录', link: '/projects/xinbot' }
           ]
+        },
+        {
+          text: '编程入门指南',
+          items: [
+            { text: '如何开始你的第一个编程项目', link: '/projects/first-project' }
+          ]
         }
       ]
     },
