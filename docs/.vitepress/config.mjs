@@ -12,10 +12,10 @@ export default defineConfig({
     logo: '/avatar.jpeg',
     nav: [
       { text: '首页', link: '/' },
-      { text: '数据结构与算法', link: '/dsa/' },
+      { text: '个人项目', link: '/projects/' },
       { text: '机器学习算法', link: '/ml/' },
       { text: '人工智能应用', link: '/ai/' },
-      { text: '个人项目', link: '/projects/' },
+      { text: '数据结构与算法', link: '/dsa/' },
       { text: '关于', link: '/about' }
     ],
     sidebar: {
