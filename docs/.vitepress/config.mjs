@@ -13,6 +13,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '个人项目', link: '/projects/' },
+      { text: '随笔', link: '/essays/' },
       { text: '机器学习算法', link: '/ml/' },
       { text: '人工智能应用', link: '/ai/' },
       { text: '数据结构与算法', link: '/dsa/' },
@@ -75,6 +76,17 @@ export default defineConfig({
           text: '编程入门指南',
           items: [
             { text: '如何开始你的第一个编程项目', link: '/projects/first-project' }
+          ]
+        }
+      ],
+      '/essays/': [
+        {
+          text: '随笔',
+          items: [
+            { text: '随笔概览', link: '/essays/' },
+            { text: '盲盒', link: '/essays/blind-box' },
+            { text: '雨', link: '/essays/rain' },
+            { text: '关于写作', link: '/essays/about-writing' }
           ]
         }
       ]
