@@ -13,6 +13,9 @@ hero:
       text: 个人项目
       link: /projects/
     - theme: alt
+      text: 随笔
+      link: /essays/
+    - theme: alt
       text: 关于我
       link: /about
 
