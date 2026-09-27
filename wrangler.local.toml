@@ -1,0 +1,10 @@
+# Local testing only. No production database is referenced.
+name = "blind-box-local"
+pages_build_output_dir = "docs/.vitepress/dist"
+compatibility_date = "2026-01-01"
+
+[[d1_databases]]
+binding = "BLIND_BOX_DB"
+database_name = "blind-box-local"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

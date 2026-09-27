@@ -3,7 +3,15 @@ title: 关于写作
 description: 关于写作恐惧与重新表达自己的思考
 ---
 
+<script setup>
+import WritingScene from '../.vitepress/components/WritingScene.vue'
+</script>
+
 # 关于写作
+
+<WritingScene />
+
+<div id="writing-article" tabindex="-1" aria-label="关于写作原文"></div>
 
 I’ve been trying to find something to write down for too many years. I finally found it now—or maybe not. Basically, I think I should be good at writing. I have a lot of thoughts, and I am good at thinking. So what deprived the paper of my thoughts? In my mind, for more than a decade, writing has been a terrifyingly difficult thing for me. I have a lot of thoughts, but I can’t say them aloud because they might be wrong. My first experience of writing a diary, and probably of writing in general, was forced on me by my grandmother. She had not even told me how to write a diary. I had just played a video game that day, and I thought it was very interesting, so I wrote about what I had done in my diary. A harsh criticism immediately reached my ears: “How dare you! Why did you write that? That is ridiculous…” How horrible that must have been for a kid who had just written his first piece of writing. I think that maybe, after that, every word I wrote seemed to be evaluated by others and could possibly be wrong, making writing increasingly terrifying. As a result, my writing got worse and worse throughout my primary school years. My grandma bought an essay-writing book for me and read me an essay from the book every day. Students in my primary school were also asked to tell a story in turn. On my day, I couldn’t remember any story, but I could remember an essay from the book. So I recited that essay. Everyone in the classroom including the teacher said it was a good story, but it was not even a story. In the past few months, I have tried to write again. The results have been totally acceptable to me. But they are not sentences directly from my mind; they are scenes that exist objectively. Eventually, I have to express my own thoughts aloud, powerfully, somehow, without relying on any object—thoughts that can easily be criticized.
 
