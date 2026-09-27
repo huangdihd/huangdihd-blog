@@ -16,8 +16,12 @@ Preview bindings have not been configured, to avoid mixing preview choices with 
 
 `docs/public/_routes.json` limits Functions invocation to `/api/blind-box`.
 The scene submits open/skip choices anonymously and displays totals at the end.
-Random item outcomes are not collected. The breakfast shop has two equally likely
-modeled outcomes; each other stall has five. Repeating an outcome is possible.
+Random item outcomes are not collected. Fictional weighted outcomes are defined in `docs/.vitepress/components/blindBoxOdds.mjs`
+and disclosed below the scene. Breakfast: poor 65%, fine 5%, feces 30%. Gift shop:
+clock 30%, diamond 3%, feces 27%, gun 15%, fake notes 25%. Street stall: medal 5%,
+lock 35%, feces 30%, gun 10%, fake notes 20%. Draws are independent, with no pity
+mechanism. Advertising deliberately does not reflect the outcome distribution.
+The final stall disappears after either choice; restarting restores it.
 Skipping is final within a playthrough.
 
 ## Free-tier setup

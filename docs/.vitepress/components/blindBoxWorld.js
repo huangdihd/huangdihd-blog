@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { drawVariant } from './blindBoxOdds.mjs'
 
 // All geometry is original: a miniature theatrical street, not photo-real assets.
 export function createBlindBoxWorld(host, onSelect) {
@@ -83,7 +84,7 @@ export function createBlindBoxWorld(host, onSelect) {
     for (let z = -2; z < 3; z += 1.2) block(scene, x, 0.115, z, 1.16, 0.025, 1.16, '#c1bbaa')
   }
   for (let x = -26; x <= 26; x += 7) {
-    const h = 9 + Math.abs(Math.sin(x)) * 7
+    const h = 17
     block(scene, x, h / 2, -8, 6.7, h, 5, '#9eaaa7')
     for (let y = 3; y < h; y += 2.3) {
       for (let dx = -2; dx <= 2; dx += 2) block(scene, x + dx, y, -5.47, 0.8, 1.25, 0.05, '#6d8285')
@@ -107,6 +108,8 @@ export function createBlindBoxWorld(host, onSelect) {
     return g
   }
   const breakfast = shop(-8, '#bd9d72', '早 安 · 早餐铺', '明 天 的 早 餐，也 在 盒 子 里', '#586b54')
+  label(breakfast, '早餐不单独出售', 0, 5.8, 0.15, 8, 1.15, '#e9dabc')
+  label(breakfast, '拆封后，不接受「这不是早餐」作为退货理由', 0, 3.3, 1.64, 5.6, 0.4)
   label(breakfast, '招牌推荐', -1.55, 2.95, 0.14, 1.75, 0.48, '#e9dabc')
   // A breakfast display behind the counter: plate, buns, cup and steam-like rods.
   cylinder(breakfast, -1.55, 2.23, 0.4, 0.65, 0.07, '#f2e5cf')
@@ -118,6 +121,11 @@ export function createBlindBoxWorld(host, onSelect) {
   cylinder(breakfast, -0.65, 2.42, 0.3, 0.15, 0.4, '#e7d8b8')
   label(breakfast, '每个人都在享用好早餐', 1.5, 2.65, 0.15, 2.45, 0.75, '#c3b58f')
   const gift = shop(0, '#99a4a0', '未 知 · 礼物商店', '拆 开 之 前，没 有 答 案', '#394c52')
+  label(gift, '别人得到了钻石', 0, 7.8, 0.1, 9, 1.2, '#d8d9ca')
+  label(gift, '此处不提供盒外的生活', 0, 3.3, 1.64, 5.6, 0.4)
+  const advertisement = new THREE.Mesh(new THREE.OctahedronGeometry(1.5), material('#c2e0df', 0.15))
+  advertisement.position.set(0, 6, -0.9)
+  gift.add(advertisement)
   for (let x = -2.2; x <= 2.2; x += 1.1) {
     block(gift, x, 2.3, 0.3, 0.6, 0.6, 0.5, '#b9aa8d')
     block(gift, x, 2.65, 0.3, 0.65, 0.1, 0.55, '#d1c4a6')
@@ -169,7 +177,7 @@ export function createBlindBoxWorld(host, onSelect) {
   })
 
   function reveal(i) {
-    const variant = Math.floor(Math.random() * (i === 0 ? 2 : 5))
+    const variant = drawVariant(i)
     const box = boxes[i]
     if (box.opened) return
     box.opened = true
@@ -179,7 +187,7 @@ export function createBlindBoxWorld(host, onSelect) {
     item.scale.setScalar(0.6)
     box.group.add(item)
     box.item = item
-    if (i === 0) {
+    if (i === 0 && variant !== 2) {
       cylinder(item, 0, 0, 0, 0.37, 0.05, '#e7ddd0')
       if (variant === 0) {
         block(item, 0, 0.1, 0, 0.44, 0.15, 0.35, '#593f27')
@@ -253,7 +261,7 @@ export function createBlindBoxWorld(host, onSelect) {
 
   function navigate(i) {
     selected = Math.max(0, Math.min(2, i))
-    targetX = positions[selected]
+    targetX = stall.visible ? positions[selected] : 19
     zoom = false
   }
   const raycaster = new THREE.Raycaster()
@@ -316,8 +324,16 @@ export function createBlindBoxWorld(host, onSelect) {
     navigate,
     approach() { zoom = true },
     reveal,
-    take(i) { boxes[i].group.visible = false },
+    take(i) {
+      boxes[i].group.visible = false
+      if (i === 2) {
+        stall.visible = false
+        targetX = 19
+        zoom = false
+      }
+    },
     reset() {
+      stall.visible = true
       boxes.forEach(box => {
         box.group.visible = true
         box.opened = false

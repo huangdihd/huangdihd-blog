@@ -1,4 +1,5 @@
 <script setup>
+import { pools } from './blindBoxOdds.mjs'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const host = ref(null)
@@ -46,13 +47,13 @@ async function loadStats() {
 }
 const shops = ['早餐铺', '礼物商店', '路边摊']
 const lines = [
-  '早餐店的招牌总是挂着那些得到精致早餐的人。',
-  '有的盲盒精致。但打开之前，你永远不知道里面有什么。',
+  '橱窗里的早餐不出售。你可以买的，只有柜台上封死的盒子。',
+  '广告比店铺还大。它只介绍别人得到的钻石。',
   '一旦错过了机会，那个卖家我就再也找不到。'
 ]
 const finished = computed(() => visited.value.every(Boolean))
 const narration = computed(() => finished.value
-  ? `你带走了 ${inventory.value.length} 件东西，留下了 ${3 - inventory.value.length} 个没有打开的盒子。走过之后，那些答案就留在了身后。`
+  ? (inventory.value.length ? '摊位不见了。你手里的东西还在。远处的招牌仍然说，每个人都在享用好早餐。' : '摊位不见了。你的手里什么也没有。明天的早餐，仍然只在盒子里出售。')
   : lines[index.value])
 let world
 let cancelled = false
@@ -162,14 +163,15 @@ onBeforeUnmount(() => { cancelled = true; world?.dispose() })
         </template>
         <template v-else>
           <p class="result">{{ result }}</p>
-          <p class="result-note">{{ result === '一顿糟糕的早餐' ? '招牌上的早餐，和你的不一样。' : '这就是你得到的。它值得吗？' }}</p>
+          <p class="result-note">{{ index === 0 ? '你的早餐到了。' : index === 1 ? '广播仍在介绍钻石。与你手里的东西无关。' : '交易完成。下次来时，这里不会有摊位。' }}</p>
           <div class="actions"><button class="primary" @click="leave()">{{ index === 2 ? '放进口袋，走到街的尽头' : '放进口袋，继续走' }}</button></div>
         </template>
       </div>
       <div class="hint">{{ finished ? '街已走完 · 无法回到过去' : '可以打开，也可以跳过 · 离开后不能回头' }}</div>
     </template>
   </section>
-  <p class="scene-note">可交互的 3D 微缩街景 · 文学演绎，不涉及付款 · 可跳过，不可回退 · 早餐两种、其余摊位各五种随机物品，可能重复 · 匿名统计打开/跳过次数，不代表人数</p>
+  <details class="scene-note"><summary>查看虚构概率（非读者统计，无保底）</summary><p v-for="(pool, i) in pools" :key="i">{{ shops[i] }}：{{ pool.map(entry => `${entry.label} ${entry.weight}%`).join(' / ') }}</p></details>
+  <p class="scene-note">可交互的 3D 微缩街景 · 文学演绎，不涉及付款 · 可跳过，不可回退 · 好结果稀少，允许重复；概率为文学设定 · 匿名统计打开/跳过次数，不代表人数</p>
 </template>
 
 <style scoped>
