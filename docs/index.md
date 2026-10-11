@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Huangdihd 的博客"
   text: "欢迎来到我的个人空间"
-  tagline: All I need, knowledge and love.
+  tagline: 'All I need, knowledge and <span class="warm">love</span>.'
   image:
     src: /avatar.jpeg
     alt: Huangdihd 的头像

@@ -5,11 +5,17 @@ export default defineConfig({
   title: "Huangdihd 的博客",
   description: "个人博客与作品集",
   lastUpdated: true,
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/snowflake.svg' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap' }]
+  ],
   markdown: {
     math: true
   },
   themeConfig: {
-    logo: '/avatar.jpeg',
+    logo: '/snowflake.svg',
     nav: [
       { text: '首页', link: '/' },
       { text: '个人项目', link: '/projects/' },
