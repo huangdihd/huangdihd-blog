@@ -1,6 +1,7 @@
 <script setup>
 import { withBase } from 'vitepress'
 import { data as essays } from './essays.data.mjs'
+import Avatar3D from './Avatar3D.vue'
 import LinSignature from './LinSignature.vue'
 import SnowField from './SnowField.vue'
 import VoxelGrid from './VoxelGrid.vue'
@@ -38,9 +39,7 @@ const pad = (n) => String(n).padStart(2, '0')
         </div>
 
         <figure class="portrait">
-          <div class="frame">
-            <img :src="withBase('/avatar.jpeg')" alt="Huangdihd 的头像" width="320" height="320" />
-          </div>
+          <Avatar3D class="frame" src="/avatar.jpeg" depth="/avatar-depth.png" alt="Huangdihd 的头像" />
           <figcaption>
             <span class="caption">Fig. 01 — 凛冬</span>
             <LinSignature class="signature" :height="34" />
@@ -230,6 +229,8 @@ const pad = (n) => String(n).padStart(2, '0')
   animation: rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
 }
 
+.portrait { perspective: 900px; }
+
 .frame {
   padding: 10px;
   border: 1px solid var(--vp-c-border);
@@ -239,12 +240,6 @@ const pad = (n) => String(n).padStart(2, '0')
 
 .frame:hover { border-color: var(--vp-c-brand-1); }
 
-.frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-}
 
 .portrait figcaption {
   display: flex;
