@@ -4,8 +4,9 @@
 
 ## 项目列表
 
-- [记自己第一次把想法做到闭环的经历 (Xinbot)](./xinbot)
-- 敬请期待...
+<ProjectCard title="Xinbot" link="/projects/xinbot" desc="记自己第一次把想法做到闭环的经历" />
+
+更多项目敬请期待...
 
 ## 编程入门指南
 
