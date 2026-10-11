@@ -235,10 +235,7 @@ const pad = (n) => String(n).padStart(2, '0')
   padding: 10px;
   border: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-elv);
-  transition: border-color 0.4s;
 }
-
-.frame:hover { border-color: var(--vp-c-brand-1); }
 
 
 .portrait figcaption {
