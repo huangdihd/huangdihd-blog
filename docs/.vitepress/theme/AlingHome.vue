@@ -39,7 +39,7 @@ const pad = (n) => String(n).padStart(2, '0')
         </div>
 
         <figure class="portrait">
-          <Avatar3D class="frame" src="/avatar.jpeg" depth="/avatar-depth.png" alt="Huangdihd 的头像" />
+          <Avatar3D class="frame" src="/avatar.jpeg" alt="Huangdihd 的头像" />
           <figcaption>
             <span class="caption">Fig. 01 — 凛冬</span>
             <LinSignature class="signature" :height="34" />
@@ -229,7 +229,7 @@ const pad = (n) => String(n).padStart(2, '0')
   animation: rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
 }
 
-.portrait { perspective: 900px; }
+.portrait { perspective: 800px; }
 
 .frame {
   padding: 10px;
