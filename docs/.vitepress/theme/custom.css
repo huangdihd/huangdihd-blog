@@ -76,6 +76,7 @@
 .vp-doc div[class*='language-'],
 .custom-block,
 .VPLocalSearchBox .shell,
+.VPDocFooter .pager-link,
 .DocSearch-Modal { border-radius: 0 !important; }
 
 /* ---------- 首页 Hero ---------- */
@@ -150,3 +151,58 @@
 .VPFeatures .item { padding: 0; margin: 0 -1px -1px 0; }
 .VPFeatures .item:hover { position: relative; z-index: 1; }
 .VPFeature { height: 100%; }
+
+/* ---------- 签名位置 ---------- */
+.hero-signature { margin-top: 20px; }
+@media (max-width: 959px) {
+  .hero-signature { margin-left: auto; margin-right: auto; }
+}
+.doc-signature { margin: 48px 0 0 auto; }
+
+/* ---------- 动态：克制，只做缓慢的漂移与淡入 ---------- */
+
+/* 细雪缓缓飘落：位移量取两层图案尺寸的整数倍，循环无缝 */
+.VPHome .VPHero {
+  animation: aling-snow 48s linear infinite;
+}
+@keyframes aling-snow {
+  from { background-position: 0 0, 11px 7px; }
+  to { background-position: 37px 410px, -12px 297px; }
+}
+
+/* Hero 依次淡入 */
+.VPHero .heading,
+.VPHero .tagline,
+.VPHero .actions,
+.VPHero .image {
+  animation: aling-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.VPHero .tagline { animation-delay: 0.15s; }
+.VPHero .actions { animation-delay: 0.3s; }
+.VPHero .image { animation-delay: 0.2s; }
+@keyframes aling-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Features 逐个出现 */
+.VPFeatures .item { animation: aling-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.VPFeatures .item:nth-child(1) { animation-delay: 0.4s; }
+.VPFeatures .item:nth-child(2) { animation-delay: 0.5s; }
+.VPFeatures .item:nth-child(3) { animation-delay: 0.6s; }
+.VPFeatures .item:nth-child(4) { animation-delay: 0.7s; }
+
+/* 交互过渡 */
+.VPFeature { transition: border-color 0.25s !important; }
+.vp-doc a { transition: border-color 0.25s, color 0.25s; }
+.VPHero .image-src { transition: border-color 0.4s; }
+.VPHero .image-src:hover { border-color: var(--vp-c-brand-1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .VPHome .VPHero,
+  .VPHero .heading,
+  .VPHero .tagline,
+  .VPHero .actions,
+  .VPHero .image,
+  .VPFeatures .item { animation: none; }
+}
