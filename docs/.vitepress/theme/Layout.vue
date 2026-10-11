@@ -16,7 +16,7 @@ const signed = computed(() => {
 <template>
   <DefaultTheme.Layout>
     <template #doc-footer-before>
-      <LinSignature v-if="signed" class="doc-signature" :height="36" />
+      <LinSignature v-if="signed" class="doc-signature" :height="44" />
     </template>
   </DefaultTheme.Layout>
 </template>
