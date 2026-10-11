@@ -36,6 +36,7 @@ const pad = (n) => String(n).padStart(2, '0')
             <a :href="withBase('/essays/')">随笔</a>
             <a :href="withBase('/about')">关于我</a>
           </nav>
+          <LinSignature class="mobile-signature" :height="30" />
         </div>
 
         <figure class="portrait">
@@ -153,6 +154,7 @@ const pad = (n) => String(n).padStart(2, '0')
 .intro > :nth-child(4) { animation-delay: 0.24s; }
 .intro > :nth-child(5) { animation-delay: 0.32s; }
 .intro > :nth-child(6) { animation-delay: 0.4s; }
+.intro > :nth-child(7) { animation-delay: 0.48s; }
 
 .eyebrow {
   font-family: var(--vp-font-family-mono);
@@ -194,6 +196,29 @@ const pad = (n) => String(n).padStart(2, '0')
   font-size: 15px;
   line-height: 1.85;
   color: var(--vp-c-text-2);
+}
+
+/* 手机上首屏刚好一屏：放不下的头像不放，签名移到文字下方 */
+@media (max-width: 959px) {
+  .hero-grid {
+    min-height: calc(100svh - var(--vp-nav-height));
+    align-content: center;
+    padding-top: 32px;
+    padding-bottom: 40px;
+  }
+
+  .portrait { display: none; }
+
+  .name { margin-top: 14px; }
+  .motto { margin-top: 16px; }
+  .rule { margin: 24px 0 20px; }
+  .quick { margin-top: 28px; }
+}
+
+.mobile-signature { margin-top: 28px; }
+
+@media (min-width: 960px) {
+  .mobile-signature { display: none; }
 }
 
 .quick {
