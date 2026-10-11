@@ -40,13 +40,14 @@ const uid = useId()
         />
       </mask>
     </defs>
-    <path
+    <g
       v-for="(s, i) in signature.strokes"
       :key="i"
       class="ink"
-      :d="s.outline"
       :mask="`url(#${uid}-m${i})`"
-    />
+    >
+      <path v-for="(seg, j) in s.ink" :key="j" :d="seg.d" :stroke-width="seg.width" />
+    </g>
   </svg>
 </template>
 
@@ -56,7 +57,12 @@ const uid = useId()
   overflow: visible;
 }
 
-.ink { fill: var(--vp-c-brand-1); }
+.ink path {
+  fill: none;
+  stroke: var(--vp-c-brand-1);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* 中线遮罩从起笔处展开到收笔处 */
 .reveal {
