@@ -2,6 +2,7 @@
 import { withBase } from 'vitepress'
 import { data as essays } from './essays.data.mjs'
 import LinSignature from './LinSignature.vue'
+import SnowField from './SnowField.vue'
 import VoxelGrid from './VoxelGrid.vue'
 
 const sections = [
@@ -19,6 +20,7 @@ const pad = (n) => String(n).padStart(2, '0')
 <template>
   <div class="aling-home">
     <section class="hero">
+      <SnowField />
       <div class="container hero-grid">
         <div class="intro">
           <p class="eyebrow">Huangdihd · 北京</p>
@@ -104,6 +106,8 @@ const pad = (n) => String(n).padStart(2, '0')
 
 /* ---------- 首屏 ---------- */
 .hero {
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid var(--vp-c-divider);
   background-image:
     radial-gradient(rgba(238, 238, 241, 0.16) 1px, transparent 1.4px),
@@ -125,6 +129,7 @@ const pad = (n) => String(n).padStart(2, '0')
 }
 
 .hero-grid {
+  position: relative;
   display: grid;
   gap: 56px;
   padding-top: 64px;
