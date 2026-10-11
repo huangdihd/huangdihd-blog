@@ -3,7 +3,7 @@ import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { withBase } from 'vitepress'
 
 // 头像是空间里的一块平面，跟随鼠标绕中心旋转；
-// 平面里的画面再按深度图分出前后：脸停在平面上，背景随转动方向错开，像透过一扇窗看进更深的空间
+// 平面里的画面再按深度图分出前后：脸停在平面上，背景朝转动的反方向错开，人物像从画面里浮出来
 const props = defineProps({
   src: { type: String, required: true },
   depth: { type: String, default: '' },
@@ -35,7 +35,7 @@ void main() {
   gl_Position = vec4(a_pos, 0.0, 1.0);
 }`
 
-// 平面转向哪边，比焦平面远的背景就朝哪边错开，比焦平面近的反向
+// 平面转向哪边，比焦平面远的背景就朝反方向错开，比焦平面近的顺着转向
 const FRAG = `
 precision mediump float;
 uniform sampler2D u_image;
@@ -45,7 +45,7 @@ varying vec2 v_uv;
 void main() {
   vec2 uv = (v_uv - 0.5) / ${ZOOM.toFixed(3)} + 0.5;
   float d = texture2D(u_depth, uv).r;
-  vec2 offset = u_mouse * (d - ${FOCAL.toFixed(2)}) * ${STRENGTH.toFixed(4)};
+  vec2 offset = u_mouse * (${FOCAL.toFixed(2)} - d) * ${STRENGTH.toFixed(4)};
   gl_FragColor = texture2D(u_image, uv + offset);
 }`
 
