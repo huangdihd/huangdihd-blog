@@ -45,7 +45,7 @@ async function onSnowLayout({ originX, originY, grid }) {
 <template>
   <div class="aling-home">
     <section ref="hero" class="hero">
-      <SnowField align-to=".intro" avoid=".intro > *, .portrait" @layout="onSnowLayout" />
+      <SnowField align-to=".intro" @layout="onSnowLayout" />
       <div class="container hero-grid">
         <div class="intro">
           <p class="eyebrow">Huangdihd · 北京</p>
