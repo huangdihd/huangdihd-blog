@@ -20,8 +20,8 @@ const REPEL_FORCE = 2.2
 const DENSITY = 1 / 4200
 
 const PALETTE = {
-  dark: { dot: '238, 238, 241', axis: '170, 185, 214', label: '#9C9EA8', cursor: '#AAB9D6', flake: '#EEEEF1', dotBase: 0.11, glow: 0.75 },
-  light: { dot: '28, 29, 34', axis: '66, 83, 122', label: '#6E707A', cursor: '#42537A', flake: '#42537A', dotBase: 0.09, glow: 0.6 }
+  dark: { dot: '238, 238, 241', axis: '170, 185, 214', label: '#9C9EA8', cursor: '#AAB9D6', flake: '#FFFFFF', flakeAlpha: 1, rim: '', dotBase: 0.11, glow: 0.75 },
+  light: { dot: '28, 29, 34', axis: '66, 83, 122', label: '#6E707A', cursor: '#42537A', flake: '#FFFFFF', flakeAlpha: 1, rim: '66, 83, 122', dotBase: 0.09, glow: 0.6 }
 }
 
 let ctx, width, height, dpr, frame, observer
@@ -41,10 +41,10 @@ function makeFlake(randomY = true) {
   return {
     x: Math.random() * width,
     y: randomY ? Math.random() * height : -4,
-    r: 0.6 + depth * 1.5,
+    r: 0.8 + depth * 1.7,
     vy: 0.18 + depth * 0.45,
     vx: 0,
-    alpha: 0.2 + depth * 0.55,
+    alpha: 0.45 + depth * 0.5,
     phase: Math.random() * Math.PI * 2,
     sway: 0.002 + Math.random() * 0.004,
     depth
@@ -221,12 +221,28 @@ function step(t) {
 
   drawGrid()
 
-  ctx.fillStyle = colors.flake
   for (const f of flakes) {
-    ctx.globalAlpha = f.alpha
+    const a = f.alpha * colors.flakeAlpha
+    if (colors.rim) {
+      // 浅色背景上白雪看不见：在雪花右下方垫一层淡淡的灰蓝阴影，让它像一粒立着的白雪，而不是描了边的圆圈
+      ctx.fillStyle = `rgba(${colors.rim}, ${(a * 0.22).toFixed(3)})`
+      ctx.beginPath()
+      ctx.arc(f.x + 0.4, f.y + 0.9, f.r + 0.5, 0, Math.PI * 2)
+      ctx.fill()
+    } else if (f.depth > 0.6) {
+      // 深色背景上，近处的大雪花外面加一圈淡淡的光晕
+      ctx.fillStyle = colors.flake
+      ctx.globalAlpha = a * 0.14
+      ctx.beginPath()
+      ctx.arc(f.x, f.y, f.r * 2.8, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    ctx.fillStyle = colors.flake
+    ctx.globalAlpha = colors.rim ? 1 : a
     ctx.beginPath()
     ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2)
     ctx.fill()
+    ctx.globalAlpha = 1
   }
   ctx.globalAlpha = 1
 
