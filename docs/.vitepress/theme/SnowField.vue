@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { useData } from 'vitepress'
+import { kept } from './snowState.mjs'
 
 // 坐标系里的雪：首屏背景是一张静止的坐标纸，雪从上方飘落穿过它。
 // - 雪花经过格点时，格点短暂亮起再慢慢暗下去，像被「采样」了一下
@@ -13,6 +14,8 @@ const props = defineProps({
   // 写雪花方程时要避开的元素（首屏文字、头像），canvas 在它们下面，文字会被挡住
   avoid: { type: String, default: '' }
 })
+// 每次布局后告诉外面坐标原点和格距，首页图注用它算头像在坐标系里的位置
+const emit = defineEmits(['layout'])
 
 const canvas = ref(null)
 const { isDark } = useData()
@@ -28,7 +31,7 @@ const PALETTE = {
   light: { dot: '28, 29, 34', axis: '66, 83, 122', label: '#6E707A', cursor: '#42537A', flake: '#FFFFFF', flakeAlpha: 1, rim: '66, 83, 122', dotBase: 0.09, glow: 0.6 }
 }
 
-let ctx, width, height, dpr, frame, observer
+let ctx, width, height, dpr, frame, observer, resizeObserver
 let flakes = []
 let origin = { x: 0, y: 0 }
 let cols = 0, rows = 0, colStart = 0, rowStart = 0
@@ -95,9 +98,18 @@ function layout() {
   rows = Math.ceil(origin.y / G) - rowStart + 1
   glow = new Float32Array(cols * rows)
 
-  const now = performance.now() / 1000
-  const count = Math.round(width * height * DENSITY)
-  flakes = Array.from({ length: count }, () => makeFlake(now))
+  // 尺寸和原点都没变（比如站内切页面回来）就沿用原来的雪，否则重新撒一遍
+  const same = kept.flakes &&
+    Math.abs(kept.width - width) < 2 && Math.abs(kept.height - height) < 2 &&
+    kept.originX === origin.x && kept.originY === origin.y
+  if (same) {
+    flakes = kept.flakes
+  } else {
+    const now = performance.now() / 1000
+    const count = Math.round(width * height * DENSITY)
+    flakes = Array.from({ length: count }, () => makeFlake(now))
+  }
+  Object.assign(kept, { flakes, width, height, originX: origin.x, originY: origin.y })
   selected = null
 
   const root = getComputedStyle(document.documentElement)
@@ -106,6 +118,7 @@ function layout() {
   font = `11px ${mono || 'monospace'}`
   legendFont = `italic 15px ${serif || 'serif'}`
   colors = isDark.value ? PALETTE.dark : PALETTE.light
+  emit('layout', { originX: origin.x, originY: origin.y, grid: G })
 }
 
 // 格点 (i, j)：i 向右为正，j 向上为正
@@ -334,6 +347,7 @@ function step(tms) {
   for (let n = 0; n < glow.length; n++) glow[n] *= fade
 
   wind *= Math.pow(0.96, k)
+  const top = origin.y / G + 0.2
   const bottom = -(height - origin.y) / G - 0.2
   for (const f of flakes) {
     let { ux, uy } = position(f, t)
@@ -361,8 +375,14 @@ function step(tms) {
     }
 
     ;({ ux, uy } = position(f, t))
+    // 落到底部以下：沿方程整段整段往上平移，换一个横向位置继续落。
+    // 标签页切走、滚出视口时动画会暂停，回来时可能已经过去很久，
+    // 按落下了几整段来平移，雪在纵向上仍然均匀，不会一齐从顶部重新出现
     if (uy < bottom) {
-      Object.assign(f, makeFlake(t, false))
+      const span = top - bottom
+      f.y0 += Math.ceil((bottom - uy) / span) * span
+      f.x0 = (Math.random() * width - origin.x) / G
+      f.kx = 0
       ;({ ux, uy } = position(f, t))
     }
     px = gx(ux)
@@ -461,7 +481,16 @@ onMounted(() => {
   ctx = canvas.value.getContext('2d')
   reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   layout()
-  window.addEventListener('resize', onResize)
+  // 盯住首屏本身的尺寸：切页面回来时首屏可能还没排好版，尺寸定下来后再按真实尺寸布局一次
+  let lastSize = `${width}x${height}`
+  resizeObserver = new ResizeObserver(() => {
+    const rect = canvas.value.parentElement.getBoundingClientRect()
+    const size = `${rect.width}x${rect.height}`
+    if (size === lastSize) return
+    lastSize = size
+    onResize()
+  })
+  resizeObserver.observe(canvas.value.parentElement)
 
   if (reduced) {
     step(performance.now())
@@ -487,7 +516,7 @@ onBeforeUnmount(() => {
   const host = canvas.value?.parentElement
   host?.removeEventListener('pointermove', onPointerMove)
   host?.removeEventListener('pointerleave', onPointerLeave)
-  window.removeEventListener('resize', onResize)
+  resizeObserver?.disconnect()
   document.removeEventListener('visibilitychange', onVisibility)
 })
 </script>
