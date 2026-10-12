@@ -1,4 +1,5 @@
 <script setup>
+import { nextTick, ref } from 'vue'
 import { withBase } from 'vitepress'
 import { data as essays } from './essays.data.mjs'
 import Avatar3D from './Avatar3D.vue'
@@ -16,12 +17,35 @@ const sections = [
 ]
 
 const pad = (n) => String(n).padStart(2, '0')
+
+// 图注写出头像在背景坐标系里的位置：取图片左下角落在哪个格点
+const hero = ref(null)
+const portrait = ref(null)
+const anchor = ref('')
+
+async function onSnowLayout({ originX, originY, grid }) {
+  await nextTick()
+  const frame = portrait.value?.querySelector('.frame')
+  if (!hero.value || !frame || !frame.offsetWidth) {
+    anchor.value = ''
+    return
+  }
+  // 用布局位置（offsetLeft/offsetTop）而不是屏幕位置：头像正在淡入上浮、画框随鼠标旋转时，屏幕位置都会偏
+  const fig = portrait.value
+  const grid0 = fig.offsetParent
+  const left = grid0.offsetLeft + fig.offsetLeft
+  // 画框是 figure 的第一个子元素，顶边对齐
+  const bottom = grid0.offsetTop + fig.offsetTop + frame.offsetHeight
+  const i = Math.round((left - originX) / grid)
+  const j = Math.round((originY - bottom) / grid)
+  anchor.value = `(${i}, ${j})`
+}
 </script>
 
 <template>
   <div class="aling-home">
-    <section class="hero">
-      <SnowField align-to=".intro" avoid=".intro > *, .portrait" />
+    <section ref="hero" class="hero">
+      <SnowField align-to=".intro" avoid=".intro > *, .portrait" @layout="onSnowLayout" />
       <div class="container hero-grid">
         <div class="intro">
           <p class="eyebrow">Huangdihd · 北京</p>
@@ -39,10 +63,10 @@ const pad = (n) => String(n).padStart(2, '0')
           <LinSignature class="mobile-signature" :height="40" />
         </div>
 
-        <figure class="portrait">
+        <figure ref="portrait" class="portrait">
           <Avatar3D class="frame" src="/avatar.jpeg" depth="/avatar-depth.png" alt="Huangdihd 的头像" />
           <figcaption>
-            <span class="caption">Fig. 01 — 凛冬</span>
+            <span class="caption">Fig. 01 — 凛冬<template v-if="anchor"> · {{ anchor }}</template></span>
             <LinSignature class="signature" :height="46" />
           </figcaption>
         </figure>
