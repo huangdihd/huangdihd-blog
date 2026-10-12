@@ -340,20 +340,25 @@ function step(tms) {
     let px = gx(ux)
     let py = gy(uy)
 
-    // 外力：鼠标附近的雪花被推开，越近越强，前景的雪花反应更明显
-    if (pointer.active) {
-      const dx = px - pointer.x
-      const dy = py - pointer.y
-      const dist = Math.hypot(dx, dy)
-      if (dist < REPEL_RADIUS && dist > 0.01) {
-        const push = (1 - dist / REPEL_RADIUS) ** 2 * REPEL_FORCE * (0.4 + f.depth) * k
-        f.x0 += ((dx / dist) * push) / G
-        f.y0 -= ((dy / dist) * push * 0.6) / G
+    // 被选中的雪花正画着它的轨迹和方程，不受外力，严格沿方程走；其余的照常被拨开、被风吹
+    if (f === selected) {
+      f.kx = 0
+    } else {
+      // 外力：鼠标附近的雪花被推开，越近越强，前景的雪花反应更明显
+      if (pointer.active) {
+        const dx = px - pointer.x
+        const dy = py - pointer.y
+        const dist = Math.hypot(dx, dy)
+        if (dist < REPEL_RADIUS && dist > 0.01) {
+          const push = (1 - dist / REPEL_RADIUS) ** 2 * REPEL_FORCE * (0.4 + f.depth) * k
+          f.x0 += ((dx / dist) * push) / G
+          f.y0 -= ((dy / dist) * push * 0.6) / G
+        }
       }
+      // 外力：风
+      f.kx = f.kx * Math.pow(0.92, k) + wind * (0.3 + f.depth) * 0.08 * k
+      f.x0 += (f.kx * k) / G
     }
-    // 外力：风
-    f.kx = f.kx * Math.pow(0.92, k) + wind * (0.3 + f.depth) * 0.08 * k
-    f.x0 += (f.kx * k) / G
 
     ;({ ux, uy } = position(f, t))
     if (uy < bottom) {
