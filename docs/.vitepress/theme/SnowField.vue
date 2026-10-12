@@ -6,13 +6,10 @@ import { kept } from './snowState.mjs'
 // 坐标系里的雪：首屏背景是一张静止的坐标纸，雪从上方飘落穿过它。
 // - 雪花经过格点时，格点短暂亮起再慢慢暗下去，像被「采样」了一下
 // - 每片雪都按一组显式的位移方程运动，方程写在坐标纸的角上
-// - 鼠标吸附到最近的格点，显示十字线和坐标；离鼠标最近的那片雪画出未来几秒的轨迹和它自己的方程
-// - 靠近的雪花被拨开，横向划动带起一阵风
+// - 靠近鼠标的雪花被拨开，横向划动带起一阵风
 const props = defineProps({
   // y 轴对齐到这个元素的左边缘（首屏文字），找不到时贴着左侧
-  alignTo: { type: String, default: '' },
-  // 写雪花方程时要避开的元素（首屏文字、头像），canvas 在它们下面，文字会被挡住
-  avoid: { type: String, default: '' }
+  alignTo: { type: String, default: '' }
 })
 // 每次布局后告诉外面坐标原点和格距，首页图注用它算头像在坐标系里的位置
 const emit = defineEmits(['layout'])
@@ -27,8 +24,8 @@ const REPEL_FORCE = 2.2
 const DENSITY = 1 / 4200
 
 const PALETTE = {
-  dark: { dot: '238, 238, 241', axis: '170, 185, 214', label: '#9C9EA8', cursor: '#AAB9D6', flake: '#FFFFFF', flakeAlpha: 1, rim: '', dotBase: 0.11, glow: 0.75 },
-  light: { dot: '28, 29, 34', axis: '66, 83, 122', label: '#6E707A', cursor: '#42537A', flake: '#FFFFFF', flakeAlpha: 1, rim: '66, 83, 122', dotBase: 0.09, glow: 0.6 }
+  dark: { dot: '238, 238, 241', axis: '170, 185, 214', label: '#9C9EA8', flake: '#FFFFFF', flakeAlpha: 1, rim: '', dotBase: 0.11, glow: 0.75 },
+  light: { dot: '28, 29, 34', axis: '66, 83, 122', label: '#6E707A', flake: '#FFFFFF', flakeAlpha: 1, rim: '66, 83, 122', dotBase: 0.09, glow: 0.6 }
 }
 
 let ctx, width, height, dpr, frame, observer, resizeObserver
@@ -39,12 +36,11 @@ let glow = new Float32Array(0)
 let visible = true
 let wind = 0
 let reduced = false
-const pointer = { x: 0, y: 0, active: false, hover: false, lastX: null }
+const pointer = { x: 0, y: 0, active: false, lastX: null }
 let colors = PALETTE.dark
 let font = '11px monospace'
 let legendFont = 'italic 15px serif'
 let lastT = null
-let selected = null
 
 // 位移方程（坐标系单位：1 = 一格，t 以秒计，y 向上为正）：
 //   x(t) = x₀ + A·sin(ωt + φ)
@@ -110,7 +106,6 @@ function layout() {
     flakes = Array.from({ length: count }, () => makeFlake(now))
   }
   Object.assign(kept, { flakes, width, height, originX: origin.x, originY: origin.y })
-  selected = null
 
   const root = getComputedStyle(document.documentElement)
   const mono = root.getPropertyValue('--vp-font-family-mono').trim()
@@ -191,39 +186,6 @@ function drawGrid() {
   ctx.globalAlpha = 1
 }
 
-function drawCursor() {
-  if (!pointer.hover) return
-  const i = Math.round((pointer.x - origin.x) / G)
-  const j = Math.round((origin.y - pointer.y) / G)
-  const x = gx(i), y = gy(j)
-  const c = colors
-
-  ctx.strokeStyle = `rgba(${c.axis}, 0.28)`
-  ctx.setLineDash([3, 5])
-  ctx.beginPath()
-  ctx.moveTo(x + 0.5, 0)
-  ctx.lineTo(x + 0.5, height)
-  ctx.moveTo(0, y + 0.5)
-  ctx.lineTo(width, y + 0.5)
-  ctx.stroke()
-  ctx.setLineDash([])
-
-  ctx.strokeStyle = c.cursor
-  ctx.beginPath()
-  ctx.arc(x, y, 4.5, 0, Math.PI * 2)
-  ctx.stroke()
-
-  // 选中了雪花时，旁边已经写着它的方程，坐标就不再写，免得两段文字叠在一起
-  if (selected) return
-  ctx.font = font
-  ctx.fillStyle = c.cursor
-  ctx.textAlign = 'left'
-  ctx.textBaseline = 'bottom'
-  ctx.fillText(`(${i}, ${j})`, x + 9, y - 7)
-}
-
-const num = (n, d) => n.toFixed(d).replace('-', '−')
-
 // 方程写在坐标纸左上角，像图表的图例
 function drawLegend() {
   const x = origin.x + G * 0.6
@@ -236,102 +198,6 @@ function drawLegend() {
   ctx.fillText('x(t) = x₀ + A sin(ωt + φ)', x, y)
   ctx.fillText('y(t) = y₀ − v t', x, y + 21)
   ctx.globalAlpha = 1
-}
-
-// 选中离鼠标最近的雪花；选中后在一定范围内保持不变，免得在几片之间来回跳
-function pickSelected() {
-  if (!pointer.hover) {
-    selected = null
-    return
-  }
-  const dist = (f) => Math.hypot(f.px - pointer.x, f.py - pointer.y)
-  if (selected && dist(selected) < 200) return
-  let best = null
-  let bestDist = 150
-  for (const f of flakes) {
-    const d = dist(f)
-    if (d < bestDist) {
-      bestDist = d
-      best = f
-    }
-  }
-  selected = best
-}
-
-// 要避开的元素的位置（相对 canvas）。字体加载完、动画结束后位置会变，所以每次用的时候现量
-function measureAvoid() {
-  if (!props.avoid) return []
-  const host = canvas.value.parentElement
-  const base = host.getBoundingClientRect()
-  return [...host.querySelectorAll(props.avoid)].map((el) => {
-    const r = el.getBoundingClientRect()
-    return { x0: r.left - base.left - 6, y0: r.top - base.top - 6, x1: r.right - base.left + 6, y1: r.bottom - base.top + 6 }
-  })
-}
-
-// 选中的雪花：画出接下来 3 秒的轨迹，旁边写上它自己的方程（τ 从此刻算起）
-function drawSelected(t) {
-  if (!selected) return
-  const f = selected
-  const c = colors
-
-  ctx.strokeStyle = `rgba(${c.axis}, 0.65)`
-  ctx.setLineDash([2, 4])
-  ctx.beginPath()
-  for (let s = 0; s <= 3.001; s += 0.05) {
-    const { ux, uy } = position(f, t + s)
-    s === 0 ? ctx.moveTo(gx(ux), gy(uy)) : ctx.lineTo(gx(ux), gy(uy))
-  }
-  ctx.stroke()
-  ctx.setLineDash([])
-
-  ctx.strokeStyle = c.cursor
-  ctx.beginPath()
-  ctx.arc(f.px, f.py, f.r + 4, 0, Math.PI * 2)
-  ctx.stroke()
-
-  const phase = (((f.w * t + f.phi) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)
-  const { uy } = position(f, t)
-  const lines = [
-    `x=${num(f.x0, 1)}+${num(f.A, 2)}sin(${num(f.w, 2)}τ+${num(phase, 2)})`,
-    `y=${num(uy, 1)}−${num(f.v, 2)}τ`
-  ]
-  // 在雪花周围试几个位置，选压到首屏文字和头像最少、又不出画面的那个
-  ctx.font = font
-  const w = Math.max(...lines.map((line) => ctx.measureText(line).width))
-  const h = lines.length * 15
-  const spots = [
-    { x: f.px + 12, y: f.py + 10 },
-    { x: f.px - 12 - w, y: f.py + 10 },
-    { x: f.px + 12, y: f.py - 10 - h },
-    { x: f.px - 12 - w, y: f.py - 10 - h },
-    { x: f.px - w / 2, y: f.py + 14 },
-    { x: f.px - w / 2, y: f.py - 14 - h }
-  ]
-  const avoidRects = measureAvoid()
-  const overlap = (p) => {
-    if (p.x < 4 || p.x + w > width - 4 || p.y < 4 || p.y + h > height - 4) return Infinity
-    let area = 0
-    for (const r of avoidRects) {
-      const ox = Math.min(p.x + w, r.x1) - Math.max(p.x, r.x0)
-      const oy = Math.min(p.y + h, r.y1) - Math.max(p.y, r.y0)
-      if (ox > 0 && oy > 0) area += ox * oy
-    }
-    return area
-  }
-  let spot = spots[0]
-  let least = Infinity
-  for (const p of spots) {
-    const a = overlap(p)
-    if (a < least) {
-      least = a
-      spot = p
-    }
-  }
-  ctx.fillStyle = c.cursor
-  ctx.textAlign = 'left'
-  ctx.textBaseline = 'top'
-  lines.forEach((line, n) => ctx.fillText(line, spot.x, spot.y + n * 15))
 }
 
 function step(tms) {
@@ -354,25 +220,20 @@ function step(tms) {
     let px = gx(ux)
     let py = gy(uy)
 
-    // 被选中的雪花正画着它的轨迹和方程，不受外力，严格沿方程走；其余的照常被拨开、被风吹
-    if (f === selected) {
-      f.kx = 0
-    } else {
-      // 外力：鼠标附近的雪花被推开，越近越强，前景的雪花反应更明显
-      if (pointer.active) {
-        const dx = px - pointer.x
-        const dy = py - pointer.y
-        const dist = Math.hypot(dx, dy)
-        if (dist < REPEL_RADIUS && dist > 0.01) {
-          const push = (1 - dist / REPEL_RADIUS) ** 2 * REPEL_FORCE * (0.4 + f.depth) * k
-          f.x0 += ((dx / dist) * push) / G
-          f.y0 -= ((dy / dist) * push * 0.6) / G
-        }
+    // 外力：鼠标附近的雪花被推开，越近越强，前景的雪花反应更明显
+    if (pointer.active) {
+      const dx = px - pointer.x
+      const dy = py - pointer.y
+      const dist = Math.hypot(dx, dy)
+      if (dist < REPEL_RADIUS && dist > 0.01) {
+        const push = (1 - dist / REPEL_RADIUS) ** 2 * REPEL_FORCE * (0.4 + f.depth) * k
+        f.x0 += ((dx / dist) * push) / G
+        f.y0 -= ((dy / dist) * push * 0.6) / G
       }
-      // 外力：风
-      f.kx = f.kx * Math.pow(0.92, k) + wind * (0.3 + f.depth) * 0.08 * k
-      f.x0 += (f.kx * k) / G
     }
+    // 外力：风
+    f.kx = f.kx * Math.pow(0.92, k) + wind * (0.3 + f.depth) * 0.08 * k
+    f.x0 += (f.kx * k) / G
 
     ;({ ux, uy } = position(f, t))
     // 落到底部以下：沿方程整段整段往上平移，换一个横向位置继续落。
@@ -425,9 +286,6 @@ function step(tms) {
     ctx.globalAlpha = 1
   }
 
-  pickSelected()
-  drawSelected(t)
-  drawCursor()
 }
 
 function loop(t) {
@@ -449,8 +307,6 @@ function onPointerMove(e) {
   pointer.x = e.clientX - rect.left
   pointer.y = e.clientY - rect.top
   pointer.active = true
-  // 只有能悬停的指针（鼠标、Pencil 悬停）才显示坐标光标
-  pointer.hover = e.pointerType !== 'touch'
   if (pointer.lastX !== null) {
     wind = Math.max(-6, Math.min(6, wind + (e.clientX - pointer.lastX) * 0.05))
   }
@@ -459,7 +315,6 @@ function onPointerMove(e) {
 
 function onPointerLeave() {
   pointer.active = false
-  pointer.hover = false
   pointer.lastX = null
 }
 
