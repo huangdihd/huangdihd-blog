@@ -229,13 +229,6 @@ function step(t) {
       ctx.beginPath()
       ctx.arc(f.x + 0.4, f.y + 0.9, f.r + 0.5, 0, Math.PI * 2)
       ctx.fill()
-    } else if (f.depth > 0.6) {
-      // 深色背景上，近处的大雪花外面加一圈淡淡的光晕
-      ctx.fillStyle = colors.flake
-      ctx.globalAlpha = a * 0.14
-      ctx.beginPath()
-      ctx.arc(f.x, f.y, f.r * 2.8, 0, Math.PI * 2)
-      ctx.fill()
     }
     ctx.fillStyle = colors.flake
     ctx.globalAlpha = colors.rim ? 1 : a
