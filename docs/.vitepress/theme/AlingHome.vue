@@ -21,7 +21,7 @@ const pad = (n) => String(n).padStart(2, '0')
 <template>
   <div class="aling-home">
     <section class="hero">
-      <SnowField />
+      <SnowField align-to=".intro" />
       <div class="container hero-grid">
         <div class="intro">
           <p class="eyebrow">Huangdihd · 北京</p>
@@ -105,27 +105,11 @@ const pad = (n) => String(n).padStart(2, '0')
 }
 
 /* ---------- 首屏 ---------- */
+/* 背景是一张坐标纸，雪落在坐标系里，全部由 SnowField 的 canvas 绘制 */
 .hero {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--vp-c-divider);
-  background-image:
-    radial-gradient(rgba(238, 238, 241, 0.16) 1px, transparent 1.4px),
-    radial-gradient(rgba(238, 238, 241, 0.08) 1px, transparent 1.4px);
-  background-size: 37px 41px, 23px 29px;
-  animation: snow 48s linear infinite;
-}
-
-:root:not(.dark) .hero {
-  background-image:
-    radial-gradient(rgba(28, 29, 34, 0.10) 1px, transparent 1.4px),
-    radial-gradient(rgba(28, 29, 34, 0.05) 1px, transparent 1.4px);
-}
-
-/* 位移取两层图案尺寸的整数倍，循环无缝 */
-@keyframes snow {
-  from { background-position: 0 0, 11px 7px; }
-  to { background-position: 37px 410px, -12px 297px; }
 }
 
 .hero-grid {
@@ -439,7 +423,6 @@ const pad = (n) => String(n).padStart(2, '0')
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero,
   .intro > *,
   .portrait,
   .row { animation: none; }
