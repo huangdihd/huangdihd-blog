@@ -21,7 +21,7 @@ const pad = (n) => String(n).padStart(2, '0')
 <template>
   <div class="aling-home">
     <section class="hero">
-      <SnowField align-to=".intro" />
+      <SnowField align-to=".intro" avoid=".intro > *, .portrait" />
       <div class="container hero-grid">
         <div class="intro">
           <p class="eyebrow">Huangdihd · 北京</p>
