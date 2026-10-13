@@ -23,7 +23,7 @@ const STRENGTH = 0.032 // 视差位移上限，占画面宽度的比例
 const FOCAL = 0.75 // 焦平面所在深度：脸部附近，几乎不动
 const ZOOM = 1.07 // 略微放大，位移时不露出边缘
 const STEPS = 40 // 去噪步数
-const GEN_DURATION = 2000 // 生成总时长（毫秒）
+const GEN_DURATION = 1500 // 生成总时长（毫秒）
 const T_MAX = 1000 // 标签上显示的扩散时间步
 
 let frame, observer, gl, uMouse, uProgress, uSeed, uCell
